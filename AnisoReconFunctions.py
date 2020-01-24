@@ -183,6 +183,10 @@ def calculateAnisoVar(powerSpectrum,center,aniso,viz):
     else:
         aniso = np.max(aniso)
 
+    if np.isreal(aniso) == False:
+        aniso = np.abs(aniso)
+
+
     #print("aniso: {}".format(aniso))
     # Note, this is what will change as a function of scale in a later implementation
     paddedPS, kpars, kperps, center, padAmount = createAnisotropicK(powerSpectrum,center,aniso)
@@ -258,7 +262,7 @@ def calculateAnisoVar(powerSpectrum,center,aniso,viz):
         ax.set_xlabel(r"$k_{\perp}$",fontsize=fs)
         plt.show()
 
-    return varProlate, varOblate, rr, cc, relError,error
+    return varProlate, varOblate, rr, cc, relError, error, aniso
 
 
 def compareIndexes(rrs,ccs,rrOlds,ccOlds):

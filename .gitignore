@@ -132,3 +132,5 @@ dmypy.json
 testData*
 *.png
 *.pdf
+reconStructData
+*.dat
