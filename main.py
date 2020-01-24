@@ -153,11 +153,10 @@ def createAnisotropicK(powerSpectrum,center,aniso):
         anisoNew = 1. / aniso
         padDim      = int( np.round( powerSpectrum.shape[0] / ( anisoNew ) ) )
     else:
-        padDim      = int( np.round( powerSpectrum.shape[0] / ( aniso) ) )
+        padDim      = int( np.round( powerSpectrum.shape[0] / ( aniso ) ) )
 
     # the amount to pad the power spectrum
-
-    padAmount   = padDim - powerSpectrum.shape[0]/2.
+    padAmount   = padDim - powerSpectrum.shape[0]/2
     paddedPS    = np.pad(powerSpectrum, (padAmount, padAmount), 'constant', constant_values=(0, 0))
     center      = np.array(center) + padAmount
 
@@ -202,9 +201,9 @@ def calculateAnisoVar(powerSpectrum,center,aniso,viz):
     else:
         aniso = np.max(aniso)
 
-
+    print("aniso: {}".format(aniso))
     # Note, this is what will change as a function of scale in a later implementation
-    paddedPS, kpars, kperps, center, padAmount = createAnisotropicK(powerSpectrum,center,anisoMean)
+    paddedPS, kpars, kperps, center, padAmount = createAnisotropicK(powerSpectrum,center,aniso)
     # Plot for checking the elliptic fits
 
 
@@ -244,9 +243,9 @@ def calculateAnisoVar(powerSpectrum,center,aniso,viz):
                 modifiedPS[rr,cc] = 1
 
         # Calculate the power in each of the rotations of the power spectra
-        prolateVolumeFactor     = extractProlateEllipse(kperp,kpar,anisoMean) / extractEllipseCircum(kperp,kpar,aniso)
+        prolateVolumeFactor     = extractProlateEllipse(kperp,kpar,aniso) / extractEllipseCircum(kperp,kpar,aniso)
         powerAtProlateKpar3D    = powerAtKparProj * prolateVolumeFactor
-        oblateVolumeFactor      = extractOblateEllipse(kperp,kpar,anisoMean) / extractEllipseCircum(kperp,kpar,aniso)
+        oblateVolumeFactor      = extractOblateEllipse(kperp,kpar,aniso) / extractEllipseCircum(kperp,kpar,aniso)
         powerAtOblateKpar3D     = powerAtKparProj * oblateVolumeFactor
 
         # Append an arrays of powers and volume factors
@@ -318,7 +317,7 @@ if __name__ == "__main__":
 
     if args['type'] == "aniso":
 
-        MachData    = "M20MA0.1"
+        MachData    = "M20MA0.5"
         iter        = "50"
         file3DDir   = "./testData/"+ MachData +"/3DDens/"
         fileProjDir = "./testData/"+ MachData +"/Proj/"
@@ -368,108 +367,3 @@ if __name__ == "__main__":
         print("The variance from the 3D prolate: {}".format(varProlate))
         print("The variance from the 3D oblate: {}".format(varOblate))
         print("The variance from the isotropic recon: {}".format(var3DIso))
-
-    if args['type'] == "iso":
-
-        def powerSpec(dens):
-            densPS, k   = PSF.PowerSpectrum(dens)
-            logDensPS   = np.log10(densPS)
-            return logDensPS
-
-        isoDir      = "./testData/isotropic/"
-        M2iso       = powerSpec(load_obj(isoDir + "Turb_hdf5_plt_cnt_0050_M2MA10_proj"))
-        M4iso       = powerSpec(load_obj(isoDir + "Turb_hdf5_plt_cnt_0050_M4MA10_proj"))
-        M10iso      = powerSpec(load_obj(isoDir + "Turb_hdf5_plt_cnt_0050_M10MA10_proj"))
-        M20iso      = powerSpec(load_obj(isoDir + "Turb_hdf5_plt_cnt_0050_M20MA10_proj"))
-
-        sigma       = 10                       # for the Gaussin kernel
-        fs          = 16                       # global fontsize
-        isobars     = np.array([0,-20,40])     # define the domain for the isobars
-
-        f, ax = plt.subplots(2,2,dpi=200,sharex=True,sharey=True)
-        ax[0,0].imshow(M2iso,cmap=plt.cm.plasma,extent=[-256.5, 256.5, -256.5, 256.5],vmin=-15,vmax=0)
-        aniso, anisoStd, prinAxisKeep, center, kperpAxis, kparAxis = EF.EllipsePlotter(ax[0,0],M2iso,sigma,isobars,"kperp")
-        EF.ContourPlot(ax[0,0],M2iso,sigma,isobars,center)
-
-        ax[0,1].imshow(M4iso,cmap=plt.cm.plasma,extent=[-256.5, 256.5, -256.5, 256.5],vmin=-15,vmax=0)
-        aniso, anisoStd, prinAxisKeep, center, kperpAxis, kparAxis = EF.EllipsePlotter(ax[0,1],M4iso,sigma,isobars,"kperp")
-        EF.ContourPlot(ax[0,1],M4iso,sigma,isobars,center)
-
-        ax[1,0].imshow(M10iso,cmap=plt.cm.plasma,extent=[-256.5, 256.5, -256.5, 256.5],vmin=-15,vmax=0)
-        aniso, anisoStd, prinAxisKeep, center, kperpAxis, kparAxis = EF.EllipsePlotter(ax[1,0],M10iso,sigma,isobars,"kperp")
-        EF.ContourPlot(ax[1,0],M10iso,sigma,isobars,center)
-
-        ax[1,1].imshow(M20iso,cmap=plt.cm.plasma,extent=[-256.5, 256.5, -256.5, 256.5],vmin=-15,vmax=0)
-        aniso, anisoStd, prinAxisKeep, center, kperpAxis, kparAxis = EF.EllipsePlotter(ax[1,1],M20iso,sigma,isobars,"kperp")
-        EF.ContourPlot(ax[1,1],M20iso,sigma,isobars,center)
-
-
-
-
-        #ax.set_ylabel(r"$k_{\parallel}$",fontsize=fs)
-        #ax.set_xlabel(r"$k_{\perp}$",fontsize=fs)
-        #cbar = plt.colorbar(plot,pad=0.01)
-        #cbar.set_label(r"$\mathscr{P}(k_{\perp},k_{\parallel})$",fontsize=fs)
-        plt.show()
-
-    if args['type'] == "viz":
-        import matplotlib.path as mpath
-        def colorBarPos(ax,loc):
-            axIn = inset_axes(ax,
-                        width="50%",  # width = 50% of parent_bbox width
-                        height="5%",  # height : 5%
-                        loc=loc)
-            return axIn
-
-        circle = mpath.Path.unit_circle()
-        verts = np.copy(circle.vertices)
-        verts[:, 0] *= 2
-        ellipMarker2 = mpath.Path(verts, circle.codes)
-
-        verts = np.copy(circle.vertices)
-        verts[:, 1] *= 2
-        ellipMarker1 = mpath.Path(verts, circle.codes)
-
-
-        Mach    = np.array([2.6,2.2,2.0,1.66,1.8,5.2,4.4,3.8,3.5,3.7])
-        MachA   = np.array([0.133,0.54,0.98,1.7,9.2,0.13,0.54,0.95,1.73,9.2])
-
-        realVar = np.array([0.543,0.574,0.512,0.674,0.603,1.575,1.749,1.997,2.260,2.346])
-        proVar  = np.array([0.295,0.318,0.369,0.494,0.558,0.871,1.263,1.514,1.802,1.589])
-        oblVar  = np.array([0.548,0.626,0.568,0.743,0.687,1.633,1.820,2.068,2.483,2.234])
-        isoVar  = np.array([0.379,0.464,0.373,0.585,0.634,1.076,1.450,1.850,2.094,1.956])
-
-        linear = lambda x: x
-        xdomain = np.linspace(0,10,1000)
-
-        fig, ax = plt.subplots(1,2,dpi=200)
-        # ax.scatter(Mach,realVar,marker='X',c=MachA,norm=colors.LogNorm(vmin=min(MachA),vmax=max(MachA)),
-        #            cmap=plt.cm.plasma,edgecolors="black",linewidths=0.5,zorder=10,s=100,label=r"True $\sigma_s^2$")
-        ax[0].scatter(realVar[0:4],isoVar[0:4],marker='o',c=MachA[0:4],norm=colors.LogNorm(vmin=min(MachA),vmax=max(MachA)),
-                   cmap=plt.cm.plasma,edgecolors="black",linewidths=0.5,zorder=10,s=100,label="Brunt+2010 estimate")
-        ax[0].scatter(realVar[0:4],proVar[0:4],marker=ellipMarker1,c=MachA[0:4],norm=colors.LogNorm(vmin=min(MachA),vmax=max(MachA)),
-                   cmap=plt.cm.plasma,edgecolors="black",linewidths=0.5,zorder=10,s=100,label="prolate estimate")
-        ax[0].scatter(realVar[0:4],oblVar[0:4],marker=ellipMarker2,c=MachA[0:4],norm=colors.LogNorm(vmin=min(MachA),vmax=max(MachA)),
-                   cmap=plt.cm.plasma,edgecolors="black",linewidths=0.5,zorder=10,s=100,label="oblate estimate")
-        ax[0].plot(xdomain,linear(xdomain),color="red",ls='--')
-        ax[0].set_xlim(0.2,0.8)
-        ax[0].set_ylim(0.2,0.8)
-        ax[0].set_xlabel(r"$\sigma^2_{\text{true}}$",fontsize=14)
-        ax[0].set_ylabel(r"$\sigma^2_{\text{estimated}}$",fontsize=14)
-
-        p = ax[1].scatter(realVar[5:9],isoVar[5:9],marker='o',c=MachA[5:9],norm=colors.LogNorm(vmin=min(MachA),vmax=max(MachA)),
-                   cmap=plt.cm.plasma,edgecolors="black",linewidths=0.5,zorder=10,s=100,label="Brunt+2010 estimate")
-        ax[1].scatter(realVar[5:9],proVar[5:9],marker=ellipMarker1,c=MachA[5:9],norm=colors.LogNorm(vmin=min(MachA),vmax=max(MachA)),
-                   cmap=plt.cm.plasma,edgecolors="black",linewidths=0.5,zorder=10,s=100,label="prolate estimate")
-        ax[1].scatter(realVar[5:9],oblVar[5:9],marker=ellipMarker2,c=MachA[5:9],norm=colors.LogNorm(vmin=min(MachA),vmax=max(MachA)),
-                   cmap=plt.cm.plasma,edgecolors="black",linewidths=0.5,zorder=10,s=100,label="oblate estimate")
-        ax[1].plot(xdomain,linear(xdomain),color="red",ls='--')
-        ax[1].set_xlim(0.8,3)
-        ax[1].set_ylim(0.8,3)
-        ax[1].set_xlabel(r"$\sigma^2_{\text{true}}$",fontsize=14)
-        ax[1].set_ylabel(r"$\sigma^2_{\text{estimated}}$",fontsize=14)
-        cax     = colorBarPos(ax[1],'upper right')
-        cbar2   = plt.colorbar(p, orientation='horizontal', cax=cax)
-        cbar2.set_label(r"$\mathcal{M}_{\text{A}0}$", labelpad=-28,fontsize=16,x=-0.2)
-
-        plt.show()
