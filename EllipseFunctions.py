@@ -205,9 +205,9 @@ def EllipseFitter(data,sigma,isobar):
     if abs(y0) > data.shape[1]/2.0 + eps or abs(y0) < data.shape[1]/2.0 - eps:
         return
 
-    print("Ellipse fitting: center = [{},{}].".format(x0,y0))
-    print("Ellipse fitting: angle of rotation = {}.".format(phi))
-    print("Ellipse fitting: axes = [{},{}].".format(a,b))
+    # print("Ellipse fitting: center = [{},{}].".format(x0,y0))
+    # print("Ellipse fitting: angle of rotation = {}.".format(phi))
+    # print("Ellipse fitting: axes = [{},{}].".format(a,b))
 
     # the angle to evaluate the elliptic equation
     theta = np.arange(0,2*np.pi, 0.01)
@@ -228,17 +228,17 @@ def EllipseFitter(data,sigma,isobar):
 
     return x, y, a, b, [x0,y0], [xMax,yMax,xMin,yMin]
 
-def EllipsePlotter(ax,PowerSpectrum,sigma,isobars,anisotropy):
+def calculateEllipses(PowerSpectrum,sigma,isobars,anisotropy,ax=None):
     """
     This function takes in the coefficient vector, fit using contrained least squares of the
     ellipse and calculates the center coordinates.
 
     INPUTS:
     ----------
-    ax              - the axis for the visualisation.
     PowerSpectrum   - the 2D power spectrum data.
     sigma           - the variance of the Gaussian kernel.
     isobars         - all of the isobars
+    ax              - the axis for the visualisation.
 
     OUTPUTS:
     ----------
@@ -275,19 +275,20 @@ def EllipsePlotter(ax,PowerSpectrum,sigma,isobars,anisotropy):
         except:
             # Test if we are fitting ellipses in a block
             if not block:
-                print "Skipping an isobar at small k."
+                #print("Skipping an isobar at small k.")
                 continue
             else:
-                print "Skipping an isobar at large k."
+                #print("Skipping an isobar at large k.")
                 prinAxisKeep    = prinAxis   # the principle axis of the first ellipse
                 centerKeep      = center
                 break
         # if the principle axis is too large (i.e. there isn't a close contour)
         if max(a,b) > 0.5*PowerSpectrum.shape[0]:
-            print "Skipping an isobar at large k."
+            print("Skipping an isobar at large k.")
             break
         else:
-            ax.plot(xEllipse-center[0],yEllipse-center[1],'blue',alpha=0.8,zorder=2)
+            if ax is not None:
+                ax.plot(xEllipse-center[0],yEllipse-center[1],'blue',alpha=0.8,zorder=2)
             prinAxisKeep    = prinAxis   # the principle axis of the first ellipse
             centerKeep      = center
 

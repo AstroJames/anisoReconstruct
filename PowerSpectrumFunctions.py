@@ -73,12 +73,12 @@ def PowerSpectrumAveraging(files,densOrderd,run):
         fileCounter = 0
         # Average the power spectrum, from 5T to 10T
         for iter in xrange(50,101):
-            print("Currently on iteration {}".format(iter))
+            #print("Currently on iteration {}".format(iter))
             # Load the density files
             try:
                 density     = LoadPickles(files,iter)
             except IndexError:
-                print "Index error, I'm going to break the loop."
+                #print("Index error, I'm going to break the loop.")
                 break
             plotCounter = 0
             for i in xrange(0,5):
