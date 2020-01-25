@@ -64,12 +64,8 @@ def extractProlateEllipse(kperp,kpar,aniso):
     """
 
     if aniso > 1.:
-        print("Swapping axis for prolate ellipse")
+        #print("Swapping axis for prolate ellipse")
         aniso = 1. / aniso
-        # kperpDummy  = kperp
-        # kperp       = kpar
-        # kpar        = kperpDummy
-
 
     # Define the eccentricity of the ellipse
     e = np.sqrt( 1. - aniso**2 )
@@ -101,9 +97,6 @@ def extractOblateEllipse(kperp,kpar,aniso):
     if aniso > 1.:
         #print("Swapping axis for oblate ellipse")
         aniso = 1. / aniso
-        # kperpDummy  = kperp
-        # kperp       = kpar
-        # kpar        = kperpDummy
 
     # Define the eccentricity of the ellipse
     e = np.sqrt( 1. - aniso**2. )
@@ -178,10 +171,13 @@ def calculateAnisoVar(powerSpectrum,center,aniso,viz):
     # especially in the high Mach regime where anistropic shocks are on smaller
     # k scales than the driving.
     #print("Picked the anistropy for the k-modes with the most power.")
-    if np.max(aniso) > 1.0:
+    if np.max(aniso) > 1.:
         aniso = np.min(aniso)
     else:
         aniso = np.max(aniso)
+
+    if aniso > 1.:
+        aniso = 1./aniso
 
     if np.isreal(aniso) == False:
         aniso = np.abs(aniso)

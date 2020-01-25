@@ -34,19 +34,18 @@ args 		= vars(ap.parse_args())
 
 if __name__ == "__main__":
 
+    os.system("touch shell_out.dat")
+    g = open("shell_out.dat","w+")
     # Read directory
     readDir     = "/Volumes/JamesBe/MHD/"
     writeDir    = "./reconStructData/"
     outData     = {} # dictionary for all of the output data
 
-
-
-
     # Directory names
-    dirNames   = ["M2MA1", "M2MA10", "M2MA2",
-                  "M4MA0.1","M4MA0.5", "M4MA1", "M4MA10", "M4MA2",
-                  "M10MA0.1","M10MA0.5", "M10MA1", "M10MA10", "M10MA2",
-                  "M20MA0.1","M20MA0.5", "M20MA1", "M20MA10", "M20MA2"]
+    dirNames   = ["M4MA10"]#"M2MA0.1","M2MA0.5","M2MA1", "M2MA2", "M2MA10",
+                  # "M4MA0.1","M4MA0.5", "M4MA1", "M4MA10", "M4MA2",
+                  # "M10MA0.1","M10MA0.5", "M10MA1", "M10MA10", "M10MA2",
+                  # "M20MA0.1","M20MA0.5", "M20MA1", "M20MA10", "M20MA2"]
 
     for dir in dirNames:
 
@@ -112,9 +111,11 @@ if __name__ == "__main__":
                 # Fit and Calculate the ellipses to all of the k-space power spectra
                 aniso, anisoStd, prinAxisKeep, center, kperpAxis, kparAxis  = EF.calculateEllipses(logDensPS,sigma,isobars,"kperp")
 
-                print("Reconstructing anisotropic dispersio.n")
+                print("Reconstructing anisotropic dispersion.")
                 # Calculate the anisotropic variances for the prolate and oblate ellipse.
                 varProlate, varOblate,  rr, cc, relError, error, aniso      = AR.calculateAnisoVar(densPS,center,aniso,viz=args['viz'])
+                averVar = np.mean([varProlate, varOblate])
+                stdVar  = abs(varProlate - varOblate) /2.
 
                 print("Reconstructing isotropic dispersion.")
                 # Calculate the isotropic variance for comparison.
@@ -122,10 +123,22 @@ if __name__ == "__main__":
 
                 print("------------------------------------------------- \n")
 
+                # Write to a shell_out file
+                g.write("Relative residual power: {}".format(relError))
+                g.write("Absolute residual power correction: {}".format(error))
+                g.write("The anisotropy factor is: {}".format(aniso))
+                g.write("The 2D projection variance is: {}".format(varProj))
+                g.write("The 3D variance is: {}".format(var3D))
+                g.write("The variance from the 3D prolate: {}".format(varProlate))
+                g.write("The variance from the 3D oblate: {}".format(varOblate))
+                g.write("The variance from the isotropic recon: {}".format(var3DIso))
+                g.write("------------------------------------------------- \n")
+
                 # Print off the values for the reconstructions
                 if args['print'] == True:
                     print("Relative residual power: {}".format(relError))
                     print("Absolute residual power correction: {}".format(error))
+                    print("The anisotropy factor is: {}".format(aniso))
                     print("The 2D projection variance is: {}".format(varProj))
                     print("The 3D variance is: {}".format(var3D))
                     print("The variance from the 3D prolate: {}".format(varProlate))
@@ -134,10 +147,12 @@ if __name__ == "__main__":
                     print("------------------------------------------------- \n")
 
                 if fileCount == 1:
-                    f.write("directory, fileNumber, relError, error, varProj, var3D, varProlate, varOblate, var3DIso \n".format(fileNumber))
+                    f.write("dir_01, fileNumber_02, relError_03, error_04, varProj_05, var3D_06, varProlate_07, varOblate_08, averVar_09, stdVar_10, var3DIso_11, aniso_12 \n".format(fileNumber))
 
-                f.write("{} {}, {}, {}, {}, {}, {}, {}, {} \n".format(dir,fileNumber,relError,error,varProj,var3D,varProlate,varOblate,var3DIso))
+                f.write("{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {} \n".format(dir,fileNumber,relError,error,varProj,var3D,varProlate,varOblate,averVar,stdVar,var3DIso,aniso))
             except:
-                print("Skipping number.")
+                print("Skipping number: {}".format(fileNumber))
                 print("------------------------------------------------- \n")
                 continue
+
+    g.close()
