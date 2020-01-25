@@ -21,9 +21,9 @@ unset log x
 set size 1.25, 1.25
 set origin 0.0, 0.0
 
-outputDat = "output_M2MA10.dat"
+outputDat = "output_M4MA10.dat"
 
-set out "M2MA10.eps"
+set out "M4MA10.eps"
 
 p outputDat u ($2/10):6 with lines linestyle 1 lw 2 lt 1 title 'True dispersion', \
   outputDat u ($2/10):7 with lines linestyle 1 lw 2 lt 2 title 'Prolate Recon.', \
@@ -33,7 +33,7 @@ p outputDat u ($2/10):6 with lines linestyle 1 lw 2 lt 1 title 'True dispersion'
 reset
 
 # Set the out file
-set out "M2MA10_cor.eps"
+set out "M4MA10_cor.eps"
 
 # General theme (modified from Christoph)
 set term post eps color enhanced dashed dashlength 3.3 linewidth 1.5 "Times-Roman" 25
