@@ -42,10 +42,10 @@ if __name__ == "__main__":
     outData     = {} # dictionary for all of the output data
 
     # Directory names
-    dirNames   = ["M10MA0.1","M10MA0.5", "M10MA1", "M10MA10", "M10MA2"]#["M2MA0.1","M2MA0.5","M2MA1", "M2MA2", "M2MA10",
-                  # "M4MA0.1","M4MA0.5", "M4MA1", "M4MA10", "M4MA2",
-                  # "M10MA0.1","M10MA0.5", "M10MA1", "M10MA10", "M10MA2",
-                  # "M20MA0.1","M20MA0.5", "M20MA1", "M20MA10", "M20MA2"]
+    dirNames   = ["M2MA0.1","M2MA0.5","M2MA1", "M2MA2", "M2MA10",
+                  "M4MA0.1","M4MA0.5", "M4MA1", "M4MA10", "M4MA2",
+                  "M10MA0.1","M10MA0.5", "M10MA1", "M10MA10", "M10MA2",
+                  "M20MA0.1","M20MA0.5", "M20MA1", "M20MA10", "M20MA2"]
 
     for dir in dirNames:
 
