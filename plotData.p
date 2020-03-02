@@ -25,10 +25,10 @@ outputDat = "output_M4MA10.dat"
 
 set out "M4MA10.eps"
 
-p outputDat u ($2/10):6 with lines linestyle 1 lw 2 lt 1 title 'True dispersion', \
-  outputDat u ($2/10):7 with lines linestyle 1 lw 2 lt 2 title 'Prolate Recon.', \
-  outputDat u ($2/10):8 with lines linestyle 1 lw 2 lt 3 title 'Oblate Recon.',
-
+p outputDat u ($2/10):19 with lines linestyle 1 lw 2 lt 1 title 'True dispersion', \
+  outputDat u ($2/10):20 with lines linestyle 1 lw 2 lt 2 title 'Prolate Recon.', \
+  outputDat u ($2/10):21 with lines linestyle 1 lw 2 lt 3 title 'Oblate Recon.', \
+  outputDat u ($2/10):22 with lines linestyle 1 lw 2 lt 4 title 'Average.', \
 # New plot
 reset
 

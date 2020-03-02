@@ -14,6 +14,7 @@ import skimage                             # import image data
 from skimage import measure, filters       # for drawing contours and Gaussian filters
 from scipy import fftpack, misc, optimize  # fourier transform
 from scipy.integrate import quad
+from scipy.stats import kurtosis, skew
 from scipy.optimize import curve_fit
 from numpy.linalg import eig, inv
 
